@@ -16,7 +16,11 @@ gem 'turbo-rails'
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
 group :development, :test do
+  gem 'database_cleaner-active_record', '~> 2.1'
   gem 'debug', platforms: %i[mri mingw x64_mingw]
+  gem 'factory_bot_rails', '~> 6.4', '>= 6.4.3'
+  gem 'faker', '~> 3.2', '>= 3.2.3'
+  gem 'rspec-rails', '~> 6.1', '>= 6.1.1'
   gem 'rubocop', '~> 1.60', '>= 1.60.2'
   gem 'rubocop-performance', '~> 1.20', '>= 1.20.2'
   gem 'rubocop-rails', '~> 2.23', '>= 2.23.1'
