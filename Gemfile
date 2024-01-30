@@ -3,6 +3,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '3.2.2'
 
+gem 'active_model_serializers', '~> 0.10.14'
 gem 'bootsnap', require: false
 gem 'enumerize', '~> 2.7'
 gem 'importmap-rails'
