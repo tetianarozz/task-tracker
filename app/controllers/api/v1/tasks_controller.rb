@@ -3,12 +3,6 @@ module Api
     class TasksController < BaseController
       before_action :set_task, only: %i[show update destroy]
 
-      def index
-        tasks = Task.all
-
-        render_resources(resources: tasks)
-      end
-
       def show
         render_resource(resource: @task)
       end

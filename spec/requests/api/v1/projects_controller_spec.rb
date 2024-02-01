@@ -4,9 +4,6 @@ RSpec.describe Api::V1::ProjectsController do
   require 'support/shared_examples/response_statuses'
 
   let(:project) { create(:project) }
-  let(:valid_project_attributes) { attributes_for(:project) }
-  let(:invalid_project_attributes) { attributes_for(:project, name: nil) }
-  let(:random_number) { Faker::Number.number(digits: 2) }
 
   describe 'GET /projects' do
     subject(:request) { get '/api/v1/projects' }
@@ -45,7 +42,7 @@ RSpec.describe Api::V1::ProjectsController do
     end
 
     context 'when request failed' do
-      let(:project_id) { random_number }
+      let(:project_id) { 0 }
 
       it_behaves_like 'responds with correct status', :not_found
 
@@ -57,6 +54,9 @@ RSpec.describe Api::V1::ProjectsController do
 
   describe 'POST /projects' do
     subject(:request) { post '/api/v1/projects', params: params }
+
+    let(:valid_project_attributes) { attributes_for(:project) }
+    let(:invalid_project_attributes) { attributes_for(:project, name: nil) }
 
     before { request }
 
@@ -87,6 +87,9 @@ RSpec.describe Api::V1::ProjectsController do
 
   describe 'PUT /projects' do
     subject(:request) { put "/api/v1/projects/#{project.id}", params: params }
+
+    let(:valid_project_attributes) { attributes_for(:project) }
+    let(:invalid_project_attributes) { attributes_for(:project, name: nil) }
 
     before { request }
 
@@ -127,12 +130,70 @@ RSpec.describe Api::V1::ProjectsController do
     end
 
     context 'when request fails' do
-      let(:project_id) { random_number }
+      let(:project_id) { 0 }
 
       it_behaves_like 'responds with correct status', :not_found
 
       it 'returns error message' do
         expect(response.parsed_body['error']).to eq 'Project not found!'
+      end
+    end
+  end
+
+  describe 'GET /projects/{project_id}/tasks' do
+    subject(:request) { get "/api/v1/projects/#{project_id}/tasks", params: params }
+
+    before do
+      create_list(:task, 2, project: project, status: :new)
+      create_list(:task, 2, project: project, status: :in_progress)
+      create_list(:task, 2, project: project, status: :completed)
+      create_list(:task, 2, status: :new)
+      request
+    end
+
+    let(:params) { status.present? ? { task_status: status } : {} }
+
+    context 'with valid project_id and not passed status' do
+      let(:project_id) { project.id }
+
+      it_behaves_like 'responds with correct status', :ok
+
+      it 'returns all project tasks' do
+        expect(response.parsed_body['tasks'].count).to eq project.tasks.count
+      end
+    end
+
+    context 'with invalid project id' do
+      let(:project_id) { 0 }
+
+      it_behaves_like 'responds with correct status', :not_found
+
+      it 'returns an error message' do
+        expect(response.parsed_body['error']).to eq 'Project not found!'
+      end
+    end
+
+    context 'when passed correct project_id and status new' do
+      let(:project_id) { project.id }
+      let(:status) { 'new' }
+
+      it_behaves_like 'responds with correct status', :ok
+
+      it 'returns only project tasks with status new' do
+        expect(response.parsed_body['tasks'].count).to eq project.tasks.with_status(status).count
+      end
+    end
+
+    context 'with valid project id and invalid status' do
+      let(:project_id) { project.id }
+      let(:status) { 'invalid' }
+
+      it 'responds with bad_request status' do
+        expect(response).to have_http_status(:bad_request)
+      end
+
+      it 'returns an error message' do
+        expect(response.parsed_body['error']).to eq 'Status is invalid!'
       end
     end
   end

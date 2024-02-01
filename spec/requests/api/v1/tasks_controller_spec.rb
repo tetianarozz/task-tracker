@@ -4,26 +4,6 @@ RSpec.describe Api::V1::TasksController do
   require 'support/shared_examples/response_statuses'
 
   let(:task) { create(:task) }
-  let(:valid_task_attributes) { attributes_for(:task, project_id: task.project_id) }
-  let(:invalid_task_attributes) { attributes_for(:task, name: nil) }
-  let(:random_number) { Faker::Number.number(digits: 2) }
-
-  describe 'GET /tasks' do
-    subject(:request) { get '/api/v1/tasks' }
-
-    before do
-      create_list(:task, 2)
-      request
-    end
-
-    context 'when request successful' do
-      it_behaves_like 'responds with correct status', :ok
-
-      it 'returns all tasks' do
-        expect(response.parsed_body.count).to eq Task.count
-      end
-    end
-  end
 
   describe 'GET /tasks/{id}' do
     subject(:request) { get "/api/v1/tasks/#{task_id}" }
@@ -49,7 +29,7 @@ RSpec.describe Api::V1::TasksController do
     end
 
     context 'when request failed' do
-      let(:task_id) { random_number }
+      let(:task_id) { 0 }
 
       it_behaves_like 'responds with correct status', :not_found
 
@@ -61,6 +41,9 @@ RSpec.describe Api::V1::TasksController do
 
   describe 'POST /tasks' do
     subject(:request) { post '/api/v1/tasks', params: params }
+
+    let(:valid_task_attributes) { attributes_for(:task, project_id: task.project_id) }
+    let(:invalid_task_attributes) { attributes_for(:task, name: nil) }
 
     before { request }
 
@@ -100,6 +83,9 @@ RSpec.describe Api::V1::TasksController do
   describe 'PUT /tasks' do
     subject(:request) { put "/api/v1/tasks/#{task.id}", params: params }
 
+    let(:valid_task_attributes) { attributes_for(:task, project_id: task.project_id) }
+    let(:invalid_task_attributes) { attributes_for(:task, name: nil) }
+
     before { request }
 
     context 'with valid parameters' do
@@ -118,7 +104,7 @@ RSpec.describe Api::V1::TasksController do
       it_behaves_like 'responds with correct status', :unprocessable_entity
 
       it 'does not update the task' do
-        expect(task.reload.attributes.symbolize_keys).not_to include(invalid_task_attributes)
+        expect(task.reload.name).not_to be_nil
       end
     end
   end
@@ -139,7 +125,7 @@ RSpec.describe Api::V1::TasksController do
     end
 
     context 'when request fails' do
-      let(:task_id) { random_number }
+      let(:task_id) { 0 }
 
       it_behaves_like 'responds with correct status', :not_found
 
