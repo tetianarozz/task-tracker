@@ -4,20 +4,20 @@ module Api
       before_action :set_task, only: %i[show update destroy]
 
       def show
-        render_resource(resource: @task)
+        render_resource(resource: @task, serializer: serializer)
       end
 
       def create
         task = Task.new(task_params)
         task.save
 
-        render_resource_or_errors(resource: task, success_status: :created)
+        render_resource_or_errors(resource: task, serializer: serializer, success_status: :created)
       end
 
       def update
         @task.update(task_params)
 
-        render_resource_or_errors(resource: @task)
+        render_resource_or_errors(resource: @task, serializer: serializer)
       end
 
       def destroy

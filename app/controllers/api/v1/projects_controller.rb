@@ -6,7 +6,7 @@ module Api
       def index
         projects = Project.all
 
-        render_resources(resources: projects)
+        render_resources(resources: projects, serializer: serializer)
       end
 
       def show
@@ -17,13 +17,13 @@ module Api
         project = Project.new(project_params)
         project.save
 
-        render_resource_or_errors(resource: project, success_status: :created)
+        render_resource_or_errors(resource: project, serializer: serializer, success_status: :created)
       end
 
       def update
         @project.update(project_params)
 
-        render_resource_or_errors(resource: @project)
+        render_resource_or_errors(resource: @project, serializer: serializer)
       end
 
       def destroy
