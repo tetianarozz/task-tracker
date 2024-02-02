@@ -33,5 +33,6 @@ group :development, :test do
 end
 
 group :development do
+  gem 'bullet', '~> 7.1', '>= 7.1.6'
   gem 'web-console'
 end

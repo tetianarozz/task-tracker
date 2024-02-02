@@ -33,7 +33,7 @@ module Api
       end
 
       def related_tasks
-        task_status = filtered_params[:task_status]
+        task_status = params[:task_status]
 
         return render_bad_request(msg: 'Status is invalid!') if task_status.present? && !Task.valid_status?(task_status)
 
@@ -50,10 +50,6 @@ module Api
 
       def project_params
         params.require(:project).permit(:name, :description)
-      end
-
-      def filtered_params
-        params.permit(:task_status)
       end
     end
   end
