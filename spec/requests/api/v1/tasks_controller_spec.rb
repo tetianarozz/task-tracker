@@ -1,12 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::TasksController do
-  require 'support/shared_examples/response_statuses'
+  include_context 'with api authorization'
 
   let(:task) { create(:task) }
 
   describe 'GET /tasks/{id}' do
-    subject(:request) { get "/api/v1/tasks/#{task_id}" }
+    subject(:request) { get "/api/v1/tasks/#{task_id}", headers: headers }
 
     before { request }
 
@@ -40,7 +40,7 @@ RSpec.describe Api::V1::TasksController do
   end
 
   describe 'POST /tasks' do
-    subject(:request) { post '/api/v1/tasks', params: params }
+    subject(:request) { post '/api/v1/tasks', params: params, headers: headers }
 
     let(:valid_task_attributes) { attributes_for(:task, project_id: task.project_id) }
     let(:invalid_task_attributes) { attributes_for(:task, name: nil) }
@@ -81,7 +81,7 @@ RSpec.describe Api::V1::TasksController do
   end
 
   describe 'PUT /tasks' do
-    subject(:request) { put "/api/v1/tasks/#{task.id}", params: params }
+    subject(:request) { put "/api/v1/tasks/#{task.id}", params: params, headers: headers }
 
     let(:valid_task_attributes) { attributes_for(:task, project_id: task.project_id) }
     let(:invalid_task_attributes) { attributes_for(:task, name: nil) }
@@ -110,7 +110,7 @@ RSpec.describe Api::V1::TasksController do
   end
 
   describe 'DELETE /tasks/{id}' do
-    subject(:request) { delete "/api/v1/tasks/#{task_id}" }
+    subject(:request) { delete "/api/v1/tasks/#{task_id}", headers: headers }
 
     before { request }
 

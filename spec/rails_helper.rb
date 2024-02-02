@@ -7,6 +7,8 @@ require 'spec_helper'
 require 'database_cleaner/active_record'
 require 'support/database_cleaner'
 require 'faker'
+require 'support/shared_examples/response_statuses'
+require 'support/shared_contexts/authorization_helper'
 
 abort('The Rails environment is running in production mode!') if Rails.env.production?
 

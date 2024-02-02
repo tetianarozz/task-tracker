@@ -1,12 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::ProjectsController do
-  require 'support/shared_examples/response_statuses'
+  include_context 'with api authorization'
 
   let(:project) { create(:project) }
 
   describe 'GET /projects' do
-    subject(:request) { get '/api/v1/projects' }
+    subject(:request) { get '/api/v1/projects', headers: headers }
 
     before do
       create_list(:project, 2)
@@ -23,7 +23,7 @@ RSpec.describe Api::V1::ProjectsController do
   end
 
   describe 'GET /projects/{id}' do
-    subject(:request) { get "/api/v1/projects/#{project_id}" }
+    subject(:request) { get "/api/v1/projects/#{project_id}", headers: headers }
 
     before { request }
 
@@ -53,7 +53,7 @@ RSpec.describe Api::V1::ProjectsController do
   end
 
   describe 'POST /projects' do
-    subject(:request) { post '/api/v1/projects', params: params }
+    subject(:request) { post '/api/v1/projects', params: params, headers: headers }
 
     let(:valid_project_attributes) { attributes_for(:project) }
     let(:invalid_project_attributes) { attributes_for(:project, name: nil) }
@@ -86,7 +86,7 @@ RSpec.describe Api::V1::ProjectsController do
   end
 
   describe 'PUT /projects' do
-    subject(:request) { put "/api/v1/projects/#{project.id}", params: params }
+    subject(:request) { put "/api/v1/projects/#{project.id}", params: params, headers: headers }
 
     let(:valid_project_attributes) { attributes_for(:project) }
     let(:invalid_project_attributes) { attributes_for(:project, name: nil) }
@@ -115,7 +115,7 @@ RSpec.describe Api::V1::ProjectsController do
   end
 
   describe 'DELETE /projects/{id}' do
-    subject(:request) { delete "/api/v1/projects/#{project_id}" }
+    subject(:request) { delete "/api/v1/projects/#{project_id}", headers: headers }
 
     before { request }
 
@@ -141,7 +141,7 @@ RSpec.describe Api::V1::ProjectsController do
   end
 
   describe 'GET /projects/{project_id}/tasks' do
-    subject(:request) { get "/api/v1/projects/#{project_id}/tasks", params: params }
+    subject(:request) { get "/api/v1/projects/#{project_id}/tasks", params: params, headers: headers }
 
     before do
       create_list(:task, 2, project: project, status: :new)
